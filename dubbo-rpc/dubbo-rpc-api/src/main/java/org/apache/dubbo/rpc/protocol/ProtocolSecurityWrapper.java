@@ -100,8 +100,11 @@ public class ProtocolSecurityWrapper implements Protocol {
                 .map(ServiceMetadata::getServiceType)
                 .ifPresent(serializeSecurityConfigurator::registerInterface);
             serializeSecurityConfigurator.registerInterface(type);
+        } catch (TypeNotPresentException t) {
+            throw t;
         } catch (Throwable t) {
-            logger.error(INTERNAL_ERROR, "", "", "Failed to register interface for security check", t);
+            logger.error(INTERNAL_ERROR, "", "",
+                String.format("Failed to register interface:%s for security check, url:(%s)", type, url), t);
         }
 
         return protocol.refer(type, url);
